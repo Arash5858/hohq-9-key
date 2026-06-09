@@ -10,11 +10,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
 //
-// ./goose-client -config client_config.json
-//
-// SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity ^0.8.28;
-
 import {Test} from "../lib/forge-std/src/Test.sol";
 import {WOTSPlus} from "../contracts/WOTSPlus.sol";
 import {console2 as console} from "../lib/forge-std/src/console2.sol";
@@ -27,6 +22,11 @@ contract WOTSPlusTest is Test {
     function setUp() public {
         // Setup code if needed
     }
+
+// ./goose-client -config client_config.json
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity ^0.8.28;
 
     function testGenerateKeyPair() public pure {
         bytes32 privateSeed = bytes32(uint256(1)); // Example seed
