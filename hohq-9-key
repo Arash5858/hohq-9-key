@@ -1,27 +1,3 @@
-// Copyright (C) 2024 quip.network
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-import {Test} from "../lib/forge-std/src/Test.sol";
-import {WOTSPlus} from "../contracts/WOTSPlus.sol";
-import {console2 as console} from "../lib/forge-std/src/console2.sol";
-import {Vm} from "../lib/forge-std/src/Vm.sol";
-
-contract WOTSPlusTest is Test {
-    // Add the constant here in the test contract
-    uint8 constant NUM_SIGNATURE_CHUNKS = 67; // 64 + 3 (NumMessageChunks + NumChecksumChunks)
-
-    function setUp() public {
-        // Setup code if needed
-    }
 
 // ./goose-client -config client_config.json
 //
@@ -269,32 +245,4 @@ pragma solidity ^0.8.28;
             for (uint j = 0; j < vectors[i].publicKeySegments.length; j++) {
                 if (j > 0) segmentsJson = string.concat(segmentsJson, ",");
                 segmentsJson = string.concat(segmentsJson, '"', vm.toString(vectors[i].publicKeySegments[j]), '"');
-            }
-            segmentsJson = string.concat(segmentsJson, "]");
-            vectorJson = string.concat(vectorJson, ',"publicKeySegments":', segmentsJson);
-
-            segmentsJson = "[";
-            for (uint j = 0; j < vectors[i].randomizationElements.length; j++) {
-                if (j > 0) segmentsJson = string.concat(segmentsJson, ",");
-                segmentsJson = string.concat(segmentsJson, '"', vm.toString(vectors[i].randomizationElements[j]), '"');
-            }
-            segmentsJson = string.concat(segmentsJson, "]");
-            vectorJson = string.concat(vectorJson, ',"randomizationElements":', segmentsJson);
-
-            vectorJson = string.concat(vectorJson, ',"publicKey":"', vm.toString(vectors[i].publicKey), '"');
-            vectorJson = string.concat(vectorJson, ',"message":"', vm.toString(vectors[i].message), '"');
-            
-            segmentsJson = "[";
-            for (uint j = 0; j < vectors[i].signature.length; j++) {
-                if (j > 0) segmentsJson = string.concat(segmentsJson, ",");
-                segmentsJson = string.concat(segmentsJson, '"', vm.toString(vectors[i].signature[j]), '"');
-            }
-            segmentsJson = string.concat(segmentsJson, "]");
-            vectorJson = string.concat(vectorJson, ',"signature":', segmentsJson);
-            
-            vectorJson = string.concat(vectorJson, "}");
-            completeJson = string.concat(completeJson, vectorName, vectorJson);
-        }
-        return string.concat(completeJson, "}");
-    }
-}
+           
