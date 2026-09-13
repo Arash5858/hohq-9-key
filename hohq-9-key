@@ -1,68 +1,69 @@
-import os
+import platform
 import shutil
-import json
-from datetime import datetime
+import time
 
-LOG_FILE = "echoforge_log.json"
+try:
+    import psutil
+except ImportError:
+    print("Missing dependency: psutil")
+    print("Install it with: pip install psutil")
+    raise SystemExit(1)
 
-def organize(directory):
-    history = []
 
-    for filename in os.listdir(directory):
-        path = os.path.join(directory, filename)
+def format_bytes(value):
+    units = ["B", "KB", "MB", "GB", "TB"]
 
-        if os.path.isfile(path):
-            ext = os.path.splitext(filename)[1][1:].lower()
+    for unit in units:
+        if value < 1024:
+            return f"{value:.1f} {unit}"
+        value /= 1024
 
-            if not ext:
-                ext = "others"
+    return f"{value:.1f} PB"
 
-            target = os.path.join(directory, ext)
 
-            os.makedirs(target, exist_ok=True)
+def get_system_info():
+    memory = psutil.virtual_memory()
+    disk = shutil.disk_usage("/")
 
-            new_path = os.path.join(target, filename)
-            shutil.move(path, new_path)
+    return {
+        "OS": platform.system(),
+        "Version": platform.release(),
+        "CPU Usage": f"{psutil.cpu_percent(interval=1):.1f}%",
+        "RAM Usage": f"{memory.percent:.1f}%",
+        "RAM Available": format_bytes(memory.available),
+        "Disk Usage": f"{(disk.used / disk.total) * 100:.1f}%",
+        "Disk Free": format_bytes(disk.free),
+        "Uptime": f"{time.time() - psutil.boot_time():.0f} seconds",
+    }
 
-            history.append({
-                "from": path,
-                "to": new_path,
-                "time": datetime.now().isoformat()
-            })
 
-            print(f"Moved: {filename} -> {ext}/")
+def display(info):
+    print("\n" + "=" * 42)
+    print("           VEYRONIX MONITOR")
+    print("=" * 42)
 
-    with open(LOG_FILE, "w") as f:
-        json.dump(history, f, indent=4)
+    for key, value in info.items():
+        print(f"{key:<18}: {value}")
 
-    print("\nOrganization complete!")
+    print("=" * 42)
 
-def undo():
-    if not os.path.exists(LOG_FILE):
-        print("No history found.")
-        return
-
-    with open(LOG_FILE, "r") as f:
-        history = json.load(f)
-
-    for item in reversed(history):
-        if os.path.exists(item["to"]):
-            shutil.move(item["to"], item["from"])
-
-    os.remove(LOG_FILE)
-    print("Undo completed!")
 
 if __name__ == "__main__":
-    print("EchoForge")
-    print("1. Organize")
-    print("2. Undo")
-
-    choice = input("Select: ")
-
-    if choice == "1":
-        folder = input("Directory: ")
-        organize(folder)
-    elif choice == "2":
-        undo()
-    else:
-        print("Invalid choice.")
+    display(get_system_info())
+psutil>=6.0.0
+git clone https://github.com/yourusername/veyronix.git
+cd veyronix
+pip install -r requirements.txt
+python system_monitor.py
+==========================================
+           VEYRONIX MONITOR
+==========================================
+OS                : Windows
+Version           : 11
+CPU Usage         : 18.4%
+RAM Usage         : 47.2%
+RAM Available     : 8.4 GB
+Disk Usage        : 61.8%
+Disk Free         : 142.7 GB
+Uptime            : 18432 seconds
+==========================================
